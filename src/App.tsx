@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Orders from "./pages/Orders";
+import AddOrder from "./pages/AddOrder";
+import EditOrder from "./pages/EditOrder";
 import OrderDetails from "./pages/OrderDetails";
 import Products from "./pages/Products";
 import NotFound from "./pages/NotFound";
@@ -33,7 +35,9 @@ const App = () => (
             }>
               <Route index element={<Dashboard />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="orders/new" element={<AddOrder />} />
               <Route path="orders/:id" element={<OrderDetails />} />
+              <Route path="orders/:id/edit" element={<EditOrder />} />
               <Route path="products" element={<Products />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

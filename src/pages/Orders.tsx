@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
-import { Eye } from 'lucide-react';
+import { Eye, Edit, Plus } from 'lucide-react';
 
 interface Order {
   id: string;
@@ -70,67 +77,74 @@ export default function Orders() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">الطلبات</h1>
-        <p className="text-muted-foreground">
-          إدارة جميع الطلبات والمبيعات
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">الطلبات</h1>
+          <p className="text-muted-foreground">
+            إدارة جميع الطلبات والمبيعات
+          </p>
+        </div>
+        <Button onClick={() => navigate('/dashboard/orders/new')}>
+          <Plus className="h-4 w-4 ml-2" />
+          طلب جديد
+        </Button>
       </div>
 
-      <div className="grid gap-4">
-        {orders.map((order) => (
-          <Card key={order.id}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">
-                  طلب #{order.order_number}
-                </CardTitle>
-                {getStatusBadge(order.status)}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-4 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">اسم العميل</p>
-                  <p className="font-medium">{order.customer_name}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">رقم الهاتف</p>
-                  <p className="font-medium">{order.customer_phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">عدد القطع</p>
-                  <p className="font-medium">{order.total_pieces}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">السعر الإجمالي</p>
-                  <p className="font-medium">{Number(order.total_price).toLocaleString()} ريال</p>
-                </div>
-              </div>
-              
-              <div className="mt-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">تاريخ الطلب</p>
-                  <p className="text-sm">{new Date(order.created_at).toLocaleDateString('ar-SA')}</p>
-                </div>
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate(`/dashboard/orders/${order.id}`)}
-                >
-                  <Eye className="h-4 w-4 ml-2" />
-                  عرض التفاصيل
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>رقم الطلب</TableHead>
+              <TableHead>العميل</TableHead>
+              <TableHead>رقم الهاتف</TableHead>
+              <TableHead>عدد القطع</TableHead>
+              <TableHead>السعر الإجمالي</TableHead>
+              <TableHead>الحالة</TableHead>
+              <TableHead>التاريخ</TableHead>
+              <TableHead className="text-left">الإجراءات</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell className="font-medium">
+                  #{order.order_number}
+                </TableCell>
+                <TableCell>{order.customer_name}</TableCell>
+                <TableCell>{order.customer_phone}</TableCell>
+                <TableCell>{order.total_pieces}</TableCell>
+                <TableCell>{Number(order.total_price).toLocaleString()} ريال</TableCell>
+                <TableCell>{getStatusBadge(order.status)}</TableCell>
+                <TableCell>
+                  {new Date(order.created_at).toLocaleDateString('ar-SA')}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/dashboard/orders/${order.id}`)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/dashboard/orders/${order.id}/edit`)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
         
         {orders.length === 0 && (
-          <Card>
-            <CardContent className="text-center py-8">
-              <p className="text-muted-foreground">لا توجد طلبات حالياً</p>
-            </CardContent>
-          </Card>
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">لا توجد طلبات حالياً</p>
+          </div>
         )}
       </div>
     </div>
